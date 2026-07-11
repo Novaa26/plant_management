@@ -105,18 +105,51 @@
         </div>
 
         <div class="card card-weather glass">
-          <p class="eyebrow">Cuaca Hari Ini</p>
+          <div class="row-between" style="margin-bottom:2px;">
+            <p class="eyebrow" style="margin-bottom:0;">Cuaca Hari Ini</p>
+            <span class="weather-status-badge" id="weather-status"><span class="status-dot status-idle"></span>Memuat…</span>
+          </div>
+          <div class="weather-loc-row">
+            <span id="weather-city">-</span><span id="weather-province" class="muted"></span><span id="weather-country" class="muted"></span>
+            <span class="muted small" id="weather-updated" style="margin-left:auto;">Belum pernah diperbarui</span>
+          </div>
           <div class="weather-body">
             <div class="weather-ico" id="weather-ico">⛅</div>
             <div>
-              <div class="weather-temp" id="weather-temp">29°C</div>
-              <div class="muted" id="weather-desc">Berawan sebagian</div>
+              <div class="weather-temp" id="weather-temp">--°C</div>
+              <div class="muted" id="weather-desc">Memuat data cuaca…</div>
             </div>
           </div>
           <div class="weather-grid">
-            <div><span>Kelembapan</span><b id="weather-hum">78%</b></div>
-            <div><span>Curah hujan</span><b id="weather-rain">30%</b></div>
-            <div><span>Angin</span><b id="weather-wind">8 km/j</b></div>
+            <div><span>Kelembapan</span><b id="weather-hum">-</b></div>
+            <div><span>Peluang hujan</span><b id="weather-rain">-</b></div>
+            <div><span>Angin</span><b id="weather-wind">-</b></div>
+          </div>
+          <div class="info-grid weather-detail-grid">
+            <div class="info-item"><span>Suhu Maks</span><b id="w-tempmax">-</b></div>
+            <div class="info-item"><span>Suhu Min</span><b id="w-tempmin">-</b></div>
+            <div class="info-item"><span>Curah Hujan</span><b id="w-rain">-</b></div>
+            <div class="info-item"><span>Kec. Angin</span><b id="w-wind">-</b></div>
+            <div class="info-item"><span>Arah Angin</span><b id="w-winddir">-</b></div>
+            <div class="info-item"><span>Tekanan Udara</span><b id="w-pressure">-</b></div>
+            <div class="info-item"><span>UV Index</span><b id="w-uv">-</b></div>
+            <div class="info-item"><span>Cloud Cover</span><b id="w-cloud">-</b></div>
+            <div class="info-item"><span>Sunrise</span><b id="w-sunrise">-</b></div>
+            <div class="info-item"><span>Sunset</span><b id="w-sunset">-</b></div>
+            <div class="info-item"><span>Dew Point</span><b id="w-dewpoint">-</b></div>
+            <div class="info-item"><span>Suhu Tanah</span><b id="w-soiltemp">-</b></div>
+            <div class="info-item"><span>Kelembapan Tanah</span><b id="w-soilmoist">-</b></div>
+          </div>
+          <div class="weather-actions">
+            <button class="btn btn-secondary" id="btn-use-location">📍 Gunakan Lokasi Saya</button>
+            <button class="btn btn-secondary" id="btn-refresh-location">🔄 Perbarui Lokasi</button>
+          </div>
+        </div>
+
+        <div class="card card-forecast glass">
+          <p class="eyebrow">Prakiraan 7 Hari</p>
+          <div class="forecast-scroll" id="forecast-strip">
+            <p class="muted">Memuat prakiraan…</p>
           </div>
         </div>
 
@@ -326,6 +359,36 @@
         </div>
       </div>
       <div class="card glass settings-card">
+        <p class="eyebrow">Cuaca &amp; Lokasi</p>
+        <p class="muted small" style="margin-top:-6px;">Open-Meteo digunakan secara otomatis tanpa API key. Isi kolom di bawah hanya jika ingin mengaktifkan provider cadangan.</p>
+        <div class="form-row" style="margin-top:12px;">
+          <button type="button" class="btn btn-secondary" id="settings-use-location-btn">📍 Gunakan Lokasi Saya</button>
+          <button type="button" class="btn btn-secondary" id="settings-refresh-location-btn">🔄 Perbarui Lokasi</button>
+        </div>
+        <div class="form-row" style="margin-top:14px;">
+          <label>Kota<input id="setting-loc-city" type="text" placeholder="Semarang"></label>
+          <label>Provinsi<input id="setting-loc-province" type="text" placeholder="Jawa Tengah"></label>
+        </div>
+        <div class="form-row">
+          <label>Latitude<input id="setting-loc-lat" type="number" step="0.0001" placeholder="-6.9932"></label>
+          <label>Longitude<input id="setting-loc-lon" type="number" step="0.0001" placeholder="110.4203"></label>
+        </div>
+        <div class="form-row" style="margin-top:6px;">
+          <button type="button" class="btn btn-secondary" id="settings-save-location-btn">Simpan Lokasi Manual</button>
+        </div>
+        <p class="muted small" style="margin-top:16px;">Provider cadangan (opsional)</p>
+        <div class="form-row">
+          <label>WeatherAPI — API Key<input id="setting-weatherapi-key" type="text" placeholder="Kosongkan jika tidak dipakai"></label>
+          <label>OpenWeatherMap — API Key<input id="setting-owm-key" type="text" placeholder="Kosongkan jika tidak dipakai"></label>
+        </div>
+        <div class="form-row">
+          <label>BMKG — Kode Wilayah (adm4)<input id="setting-bmkg-adm4" type="text" placeholder="mis. 33.74.01.1002"></label>
+        </div>
+        <div class="form-row">
+          <button type="button" class="btn btn-secondary" id="settings-save-providers-btn">Simpan Pengaturan Provider</button>
+        </div>
+      </div>
+      <div class="card glass settings-card">
         <p class="eyebrow">Tampilan</p>
         <div class="form-row">
           <label class="switch-row"><span>Mode Gelap</span>
@@ -456,6 +519,14 @@
 
 <div id="toast-container"></div>
 
+<script src="js/cacheService.js"></script>
+<script src="js/locationService.js"></script>
+<script src="js/weatherProvider.js"></script>
+<script src="js/weatherForecast.js"></script>
+<script src="js/weatherService.js"></script>
+<script src="js/weatherAI.js"></script>
+<script src="js/notificationService.js"></script>
+<script src="js/weatherUI.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

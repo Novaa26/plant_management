@@ -266,12 +266,7 @@ function getPlantStatus(plant){
   return "sehat";
 }
 
-function weatherEngineAvailable(){
-  return typeof WeatherAI !== "undefined" && typeof WeatherService !== "undefined";
-}
-
 function needsWaterToday(plant){
-  if(!weatherEngineAvailable()) return true; // safe default: assume watering is needed
   const analysis = WeatherAI.analyze(buildWeatherAIContext(plant), WeatherService.state);
   return analysis.watering.shouldWaterToday;
 }
@@ -284,12 +279,8 @@ function generateRecommendations(plant){
     recs.push({ title:"Naikkan pH Tanah", body:`pH tanah saat ini ${plant.ph} tergolong asam. Aplikasikan dolomit 1–2 minggu sebelum pemupukan berikutnya.` });
   }
 
-  if(weatherEngineAvailable()){
-    const analysis = WeatherAI.analyze(buildWeatherAIContext(plant, phase), WeatherService.state);
-    recs.push(...analysis.recommendations);
-  } else {
-    recs.push({ title:"Pertahankan Jadwal Penyiraman", body:"Modul cuaca tidak tersedia saat ini — gunakan jadwal penyiraman standar sesuai fase pertumbuhan." });
-  }
+  const analysis = WeatherAI.analyze(buildWeatherAIContext(plant, phase), WeatherService.state);
+  recs.push(...analysis.recommendations);
 
   recs.push({ title:"Estimasi Panen", body: estimateHarvest(plant).text });
   return recs;
@@ -437,11 +428,6 @@ function renderGreeting(){
 }
 
 function renderWeather(){
-  if(typeof WeatherUI === "undefined" || typeof WeatherService === "undefined"){
-    const desc = document.getElementById('weather-desc');
-    if(desc) desc.textContent = "Modul cuaca tidak dapat dimuat.";
-    return;
-  }
   WeatherUI.renderAll(WeatherService.state);
 }
 
@@ -496,14 +482,12 @@ function renderProgressRings(){
 
 function renderNotifications(){
   const items = [];
+  const plantAnalyses = AppState.plants.map(p => ({
+    plantName: p.name,
+    analysis: WeatherAI.analyze(buildWeatherAIContext(p), WeatherService.state),
+  }));
 
-  if(weatherEngineAvailable() && typeof NotificationService !== "undefined"){
-    const plantAnalyses = AppState.plants.map(p => ({
-      plantName: p.name,
-      analysis: WeatherAI.analyze(buildWeatherAIContext(p), WeatherService.state),
-    }));
-    items.push(...NotificationService.getWeatherNotifications(WeatherService.state, plantAnalyses));
-  }
+  items.push(...NotificationService.getWeatherNotifications(WeatherService.state, plantAnalyses));
 
   AppState.plants.forEach(p => {
     const status = getPlantStatus(p);
@@ -1262,32 +1246,25 @@ function applyTheme(dark){
 --------------------------------------------------------- */
 
 function init(){
-  // boot loader fade-out — first thing, unconditionally, so the app never
-  // gets stuck on the loading screen even if something below throws.
-  setTimeout(() => document.getElementById('boot-loader').classList.add('done'), 500);
-
   seedDataIfEmpty();
   applyTheme(AppState.settings.dark);
 
   // ---- Weather Engine: start fetching + auto-refresh every 5 minutes ----
-  // Wrapped defensively: if any weather-engine file failed to load (bad path,
-  // blocked request, etc.) the rest of the app must keep working normally.
-  try{
-    WeatherService.subscribe(() => {
-      // Re-render whatever is weather-dependent on the currently active view,
-      // plus the dashboard's own weather widgets, without a page refresh.
-      const activeView = document.querySelector('.view.active');
-      const activeId = activeView ? activeView.id.replace('view-', '') : '';
-      renderWeather();
-      if(activeId === 'dashboard') renderDashboard();
-      if(activeId === 'plants') renderPlantsList();
-      if(activeId === 'detail') renderPlantDetail();
-      if(activeId === 'calendar') renderCalendar();
-    });
-    WeatherService.init();
-  }catch(e){
-    console.error("Weather Engine gagal dimulai:", e);
-  }
+  WeatherService.subscribe(() => {
+    // Re-render whatever is weather-dependent on the currently active view,
+    // plus the dashboard's own weather widgets, without a page refresh.
+    const activeView = document.querySelector('.view.active');
+    const activeId = activeView ? activeView.id.replace('view-', '') : '';
+    renderWeather();
+    if(activeId === 'dashboard') renderDashboard();
+    if(activeId === 'plants') renderPlantsList();
+    if(activeId === 'detail') renderPlantDetail();
+    if(activeId === 'calendar') renderCalendar();
+  });
+  WeatherService.init();
+
+  // boot loader fade-out
+  setTimeout(() => document.getElementById('boot-loader').classList.add('done'), 500);
 
   // nav
   document.querySelectorAll('.nav-item').forEach(btn => {
