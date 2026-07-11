@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tumbuh — Smart Plant Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== VINE LOADER (first paint) ===================== -->
+<div id="boot-loader" aria-hidden="true">
+  <svg viewBox="0 0 200 200" width="72" height="72">
+    <path id="boot-vine" d="M100 190 C 60 160, 140 140, 100 110 C 60 80, 140 60, 100 20"
+      fill="none" stroke="#8FA986" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<div id="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" width="30" height="30">
+        <path d="M20 36 C20 36 20 22 20 16 C20 9 14 4 6 4 C6 14 12 20 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M20 20 C28 20 34 14 34 4 C26 4 20 9 20 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-name">Tumbuh</span>
+    </div>
+
+    <nav class="nav" id="main-nav">
+      <button class="nav-item active" data-view="dashboard">
+        <span class="nav-ico">◱</span><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="plants">
+        <span class="nav-ico">⌗</span><span>Tanaman Saya</span>
+      </button>
+      <button class="nav-item" data-view="calendar">
+        <span class="nav-ico">▦</span><span>Kalender Tani</span>
+      </button>
+      <button class="nav-item" data-view="diagnosis">
+        <span class="nav-ico">✦</span><span>Diagnosa AI</span>
+      </button>
+      <button class="nav-item" data-view="analytics">
+        <span class="nav-ico">◔</span><span>Analitik</span>
+      </button>
+      <button class="nav-item" data-view="costs">
+        <span class="nav-ico">฿</span><span>Biaya &amp; Hasil</span>
+      </button>
+      <button class="nav-item" data-view="journal">
+        <span class="nav-ico">✎</span><span>Jurnal Harian</span>
+      </button>
+      <button class="nav-item" data-view="settings">
+        <span class="nav-ico">⚙</span><span>Pengaturan</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <button id="theme-toggle" class="theme-toggle" title="Ganti tema">
+        <span class="sun">☀</span><span class="moon">☾</span>
+        <span class="knob"></span>
+      </button>
+      <div class="soil-note">Tanah baik hari ini untuk menanam. 🌱</div>
+    </div>
+  </aside>
+
+  <!-- mobile topbar -->
+  <div class="mobile-topbar">
+    <button id="mobile-menu-btn" aria-label="Menu">☰</button>
+    <span class="brand-name">Tumbuh</span>
+    <button id="mobile-search-btn" aria-label="Cari">⌕</button>
+  </div>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="view-title">Dashboard</h1>
+        <p id="view-subtitle" class="muted">Ringkasan kebun Anda hari ini</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <span class="search-ico">⌕</span>
+          <input id="global-search" type="text" placeholder="Cari tanaman, penyakit, pupuk, jadwal…">
+          <div id="search-results" class="search-results hidden"></div>
+        </div>
+        <button class="btn btn-primary" id="add-plant-btn">+ Tambah Tanaman</button>
+      </div>
+    </header>
+
+    <!-- ============ VIEW: DASHBOARD ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="bento">
+
+        <div class="card card-greeting glass">
+          <div>
+            <p class="eyebrow" id="greeting-time">Selamat Pagi</p>
+            <h2 id="greeting-name">Halo, Petani 👋</h2>
+            <p class="muted" id="greeting-line">Semoga panen kali ini melimpah.</p>
+          </div>
+          <div class="calendar-mini" id="calendar-mini"></div>
+        </div>
+
+        <div class="card card-weather glass">
+          <p class="eyebrow">Cuaca Hari Ini</p>
+          <div class="weather-body">
+            <div class="weather-ico" id="weather-ico">⛅</div>
+            <div>
+              <div class="weather-temp" id="weather-temp">29°C</div>
+              <div class="muted" id="weather-desc">Berawan sebagian</div>
+            </div>
+          </div>
+          <div class="weather-grid">
+            <div><span>Kelembapan</span><b id="weather-hum">78%</b></div>
+            <div><span>Curah hujan</span><b id="weather-rain">30%</b></div>
+            <div><span>Angin</span><b id="weather-wind">8 km/j</b></div>
+          </div>
+        </div>
+
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-green">⌗</div>
+          <div>
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="muted">Tanaman aktif</div>
+          </div>
+        </div>
+
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-gold">◆</div>
+          <div>
+            <div class="stat-num" id="stat-ready">0</div>
+            <div class="muted">Siap panen</div>
+          </div>
+        </div>
+
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-blue">◍</div>
+          <div>
+            <div class="stat-num" id="stat-water">0</div>
+            <div class="muted">Perlu disiram</div>
+          </div>
+        </div>
+
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-rust">✕</div>
+          <div>
+            <div class="stat-num" id="stat-sick">0</div>
+            <div class="muted">Sedang sakit</div>
+          </div>
+        </div>
+
+        <div class="card card-progress glass">
+          <p class="eyebrow">Rata-rata Progres Kebun</p>
+          <div class="ring-row" id="dashboard-rings"></div>
+        </div>
+
+        <div class="card card-chart glass">
+          <p class="eyebrow">Perkembangan Tanaman (30 hari)</p>
+          <canvas id="growth-chart" height="160"></canvas>
+        </div>
+
+        <div class="card card-notif glass">
+          <p class="eyebrow">Notifikasi Penting</p>
+          <div id="notif-list" class="notif-list"></div>
+        </div>
+
+        <div class="card card-insight glass">
+          <p class="eyebrow">✦ AI Insight Hari Ini</p>
+          <div id="ai-insight-list" class="insight-list"></div>
+        </div>
+
+        <div class="card card-plantlist glass">
+          <div class="row-between">
+            <p class="eyebrow">Ringkasan Tanaman</p>
+            <button class="link-btn" data-goto="plants">Lihat semua →</button>
+          </div>
+          <div id="dashboard-plant-rows" class="plant-rows"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ VIEW: PLANTS LIST ============ -->
+    <section class="view" id="view-plants">
+      <div class="toolbar">
+        <div class="chip-filters" id="plant-filters">
+          <button class="chip active" data-filter="all">Semua</button>
+          <button class="chip" data-filter="ready">Siap Panen</button>
+          <button class="chip" data-filter="sick">Sakit</button>
+          <button class="chip" data-filter="water">Perlu Air</button>
+        </div>
+      </div>
+      <div class="plant-grid" id="plant-grid"></div>
+    </section>
+
+    <!-- ============ VIEW: PLANT DETAIL ============ -->
+    <section class="view" id="view-detail">
+      <button class="link-btn back-btn" data-goto="plants">← Kembali ke Tanaman Saya</button>
+      <div id="detail-content"></div>
+    </section>
+
+    <!-- ============ VIEW: CALENDAR ============ -->
+    <section class="view" id="view-calendar">
+      <div class="card glass calendar-card">
+        <div class="calendar-header">
+          <button id="cal-prev" class="icon-btn">‹</button>
+          <h3 id="cal-month-label">—</h3>
+          <button id="cal-next" class="icon-btn">›</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+      <div class="card glass">
+        <p class="eyebrow">Agenda Terdekat</p>
+        <div id="agenda-list" class="notif-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ VIEW: DIAGNOSIS ============ -->
+    <section class="view" id="view-diagnosis">
+      <div class="diagnosis-grid">
+        <div class="card glass">
+          <p class="eyebrow">Masukkan Gejala</p>
+          <p class="muted">Pilih satu atau lebih gejala yang terlihat pada tanaman Anda.</p>
+          <div class="symptom-grid" id="symptom-grid"></div>
+          <select id="diagnosis-plant-select" class="select-input"></select>
+          <button class="btn btn-primary" id="run-diagnosis-btn" style="margin-top:14px;">✦ Jalankan Diagnosa AI</button>
+        </div>
+        <div class="card glass" id="diagnosis-result-card">
+          <p class="eyebrow">Hasil Diagnosa</p>
+          <div id="diagnosis-result">
+            <p class="muted">Pilih gejala di sebelah kiri untuk memulai diagnosa.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card glass" style="margin-top:20px;">
+        <p class="eyebrow">Database Penyakit &amp; Hama</p>
+        <div class="pest-grid" id="pest-database-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============ VIEW: ANALYTICS ============ -->
+    <section class="view" id="view-analytics">
+      <div class="bento">
+        <div class="card glass">
+          <p class="eyebrow">Grafik Pertumbuhan</p>
+          <canvas id="chart-growth" height="180"></canvas>
+        </div>
+        <div class="card glass">
+          <p class="eyebrow">Penggunaan Air (L/minggu)</p>
+          <canvas id="chart-water" height="180"></canvas>
+        </div>
+        <div class="card glass">
+          <p class="eyebrow">Penggunaan Pupuk (kg/bulan)</p>
+          <canvas id="chart-fert" height="180"></canvas>
+        </div>
+        <div class="card glass">
+          <p class="eyebrow">Biaya vs Keuntungan</p>
+          <canvas id="chart-cost" height="180"></canvas>
+        </div>
+        <div class="card glass">
+          <p class="eyebrow">Distribusi Fase Tanaman</p>
+          <canvas id="chart-phase" height="180"></canvas>
+        </div>
+        <div class="card glass">
+          <p class="eyebrow">Produktivitas per Jenis</p>
+          <canvas id="chart-productivity" height="180"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VIEW: COSTS ============ -->
+    <section class="view" id="view-costs">
+      <div class="bento">
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-green">฿</div>
+          <div><div class="stat-num" id="cost-total-modal">Rp 0</div><div class="muted">Total Modal</div></div>
+        </div>
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-rust">−</div>
+          <div><div class="stat-num" id="cost-total-expense">Rp 0</div><div class="muted">Total Pengeluaran</div></div>
+        </div>
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-gold">HPP</div>
+          <div><div class="stat-num" id="cost-hpp">Rp 0</div><div class="muted">Harga Pokok Produksi</div></div>
+        </div>
+        <div class="card stat-card glass">
+          <div class="stat-ico stat-blue">%</div>
+          <div><div class="stat-num" id="cost-roi">0%</div><div class="muted">ROI Estimasi</div></div>
+        </div>
+      </div>
+
+      <div class="card glass" style="margin-top:20px;">
+        <div class="row-between">
+          <p class="eyebrow">Rincian Biaya</p>
+          <button class="btn btn-secondary" id="add-cost-btn">+ Tambah Biaya</button>
+        </div>
+        <table class="data-table" id="cost-table">
+          <thead><tr><th>Tanggal</th><th>Kategori</th><th>Tanaman</th><th>Keterangan</th><th>Jumlah</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ VIEW: JOURNAL ============ -->
+    <section class="view" id="view-journal">
+      <div class="card glass">
+        <div class="row-between">
+          <p class="eyebrow">Jurnal Harian</p>
+          <button class="btn btn-secondary" id="add-journal-btn">+ Catatan Baru</button>
+        </div>
+        <div id="journal-list" class="journal-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ VIEW: SETTINGS ============ -->
+    <section class="view" id="view-settings">
+      <div class="card glass settings-card">
+        <p class="eyebrow">Profil Pengguna</p>
+        <div class="form-row">
+          <label>Nama<input id="setting-name" type="text" value="Petani"></label>
+          <label>Lokasi Kebun<input id="setting-location" type="text" value="Jawa Tengah"></label>
+        </div>
+      </div>
+      <div class="card glass settings-card">
+        <p class="eyebrow">Tampilan</p>
+        <div class="form-row">
+          <label class="switch-row"><span>Mode Gelap</span>
+            <button class="mini-toggle" id="settings-dark-toggle"><span class="mini-knob"></span></button>
+          </label>
+        </div>
+      </div>
+      <div class="card glass settings-card">
+        <p class="eyebrow">Data</p>
+        <div class="form-row wrap">
+          <button class="btn btn-secondary" id="export-json-btn">Export JSON</button>
+          <button class="btn btn-secondary" id="export-csv-btn">Export CSV</button>
+          <button class="btn btn-danger" id="reset-data-btn">Reset Data</button>
+        </div>
+        <p class="muted small">Data disimpan secara lokal di peramban Anda.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== MODAL: ADD/EDIT PLANT ===================== -->
+<div class="modal-overlay hidden" id="plant-modal-overlay">
+  <div class="modal glass">
+    <div class="modal-head">
+      <h3 id="plant-modal-title">Tambah Tanaman Baru</h3>
+      <button class="icon-btn" id="close-plant-modal">✕</button>
+    </div>
+    <form id="plant-form" class="modal-body">
+      <div class="form-row">
+        <label>Nama Tanaman*<input required name="name" type="text" placeholder="cth. Cabai Rawit Belakang"></label>
+        <label>Jenis Tanaman*
+          <select required name="type" id="plant-type-select"></select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Varietas<input name="variety" type="text" placeholder="cth. Cakra Hijau"></label>
+        <label>Lokasi Tanam<input name="location" type="text" placeholder="cth. Petak A2"></label>
+      </div>
+      <div class="form-row">
+        <label>Tanggal Tanam*<input required name="plantedDate" type="date"></label>
+        <label>Jumlah Tanaman<input name="count" type="number" min="1" value="1"></label>
+      </div>
+      <div class="form-row">
+        <label>Luas Lahan (m²)<input name="area" type="number" min="0" value="10"></label>
+        <label>Media Tanam
+          <select name="media">
+            <option>Tanah</option><option>Polybag</option><option>Hidroponik</option><option>Pot</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>pH Tanah<input name="ph" type="number" step="0.1" min="0" max="14" value="6.5"></label>
+        <label>Jenis Tanah
+          <select name="soil">
+            <option>Lempung</option><option>Berpasir</option><option>Liat</option><option>Gambut</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Suhu Rata-rata (°C)<input name="temp" type="number" value="27"></label>
+        <label>Kelembapan (%)<input name="humidity" type="number" value="70"></label>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" id="cancel-plant-modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan Tanaman</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL: JOURNAL ENTRY ===================== -->
+<div class="modal-overlay hidden" id="journal-modal-overlay">
+  <div class="modal glass">
+    <div class="modal-head">
+      <h3>Catatan Jurnal Baru</h3>
+      <button class="icon-btn" id="close-journal-modal">✕</button>
+    </div>
+    <form id="journal-form" class="modal-body">
+      <label>Tanaman
+        <select name="plantId" id="journal-plant-select"></select>
+      </label>
+      <label>Kondisi Tanaman
+        <select name="condition">
+          <option>Sehat</option><option>Perlu Perhatian</option><option>Sakit</option>
+        </select>
+      </label>
+      <label>Catatan Pengamatan<textarea name="note" rows="4" placeholder="Tuliskan hasil pengamatan hari ini…"></textarea></label>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" id="cancel-journal-modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan Catatan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL: COST ENTRY ===================== -->
+<div class="modal-overlay hidden" id="cost-modal-overlay">
+  <div class="modal glass">
+    <div class="modal-head">
+      <h3>Tambah Biaya</h3>
+      <button class="icon-btn" id="close-cost-modal">✕</button>
+    </div>
+    <form id="cost-form" class="modal-body">
+      <div class="form-row">
+        <label>Tanggal<input name="date" type="date"></label>
+        <label>Kategori
+          <select name="category">
+            <option>Bibit</option><option>Pupuk</option><option>Pestisida</option><option>Air</option>
+            <option>Listrik</option><option>Tenaga Kerja</option><option>Transportasi</option><option>Peralatan</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Tanaman Terkait
+          <select name="plantId" id="cost-plant-select"><option value="">Umum</option></select>
+        </label>
+        <label>Jumlah (Rp)<input name="amount" type="number" min="0" placeholder="0"></label>
+      </div>
+      <label>Keterangan<input name="note" type="text" placeholder="cth. Pupuk NPK 5kg"></label>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" id="cancel-cost-modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
