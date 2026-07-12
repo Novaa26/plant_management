@@ -803,7 +803,7 @@ html.dark .toast{ color:#122016; }
 }
 }
 
-@media (max-width: 360px){
+@media (max-width: 430px){
 
   /* ===== APP ===== */
   #app{
@@ -1008,6 +1008,36 @@ html.dark .toast{ color:#122016; }
     width:100%;
   }
 
+  /* ===== CHART ===== */
+
+.chart-card{
+    height:auto;
+    min-height:260px;
+}
+
+.chart-wrap{
+    position:relative;
+    width:100%;
+    height:220px;
+}
+
+.chart-wrap canvas{
+    width:100% !important;
+    height:220px !important;
+}
+
+/* ===== PROGRESS CARD ===== */
+
+.progress-card{
+    height:auto;
+    min-height:260px;
+}
+
+.progress-ring{
+    width:120px;
+    height:120px;
+    margin:auto;
+}
   /* ===== STAT CARD ===== */
 
   .stat-card{
@@ -1124,4 +1154,155 @@ html.dark .toast{ color:#122016; }
     opacity:1;
     visibility:visible;
 }
+}
+
+@media (max-width:393px){
+/* ===== CHART ===== */
+
+.chart-card{
+    height:auto;
+    min-height:260px;
+}
+
+.chart-wrap{
+    position:relative;
+    width:100%;
+    height:220px;
+}
+
+.chart-wrap canvas{
+    width:100% !important;
+    height:220px !important;
+}
+
+/* ===== PROGRESS CARD ===== */
+
+.progress-card{
+    height:auto;
+    min-height:260px;
+}
+
+.progress-ring{
+    width:120px;
+    height:120px;
+    margin:auto;
+}
+    .mobile-topbar{
+        padding:0 14px;
+        height:60px;
+    }
+
+    .sidebar{
+        left:10px;
+        right:10px;
+        top:68px;
+        padding:16px;
+    }
+
+    .nav-item{
+        padding:13px 14px;
+        font-size:.92rem;
+    }
+
+    .main{
+        padding:18px 14px 60px;
+    }
+
+    .card{
+        padding:16px;
+    }
+
+    .weather-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media (max-width:360px){
+
+    .mobile-topbar{
+        height:56px;
+        padding:0 12px;
+    }
+
+    .mobile-topbar button{
+        width:38px;
+        height:38px;
+        font-size:1.2rem;
+    }
+
+    .sidebar{
+
+        top:64px;
+
+        left:8px;
+        right:8px;
+
+        padding:14px;
+
+        border-radius:18px;
+    }
+
+    .brand img{
+        width:42px;
+        height:42px;
+    }
+
+    .nav-item{
+
+        padding:12px;
+
+        font-size:.88rem;
+    }
+
+    .main{
+
+        padding:16px 12px 55px;
+    }
+
+    .card{
+
+        padding:14px;
+    }
+
+    .weather-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .stat-card{
+
+        flex-direction:column;
+        text-align:center;
+    }
+
+}
+
+@media (max-width:320px){
+
+    h1{
+        font-size:1.4rem;
+    }
+
+    .mobile-topbar{
+        padding:0 10px;
+    }
+
+    .main{
+        padding:12px 10px 50px;
+    }
+
+    .sidebar{
+        left:6px;
+        right:6px;
+    }
+
+    .card{
+        padding:12px;
+    }
+
+    .btn{
+        font-size:.82rem;
+    }
+
 }
