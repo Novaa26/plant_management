@@ -1304,7 +1304,30 @@ function init(){
   document.getElementById('mobile-search-btn').addEventListener('click', () => {
     document.getElementById('global-search').focus();
   });
+  document.addEventListener("DOMContentLoaded", () => {
 
+    const menuBtn = document.getElementById("mobile-menu-btn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("mobile-overlay");
+
+    if (!menuBtn || !sidebar) return;
+
+    menuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+
+        if (overlay) {
+            overlay.classList.toggle("show");
+        }
+    });
+
+    if (overlay) {
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
+        });
+    }
+
+});
   // theme toggles
   document.getElementById('theme-toggle').addEventListener('click', () => applyTheme(!AppState.settings.dark));
   document.getElementById('settings-dark-toggle').addEventListener('click', () => {
